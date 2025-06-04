@@ -2,10 +2,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../../infrastructure/models/UserModel";
 import redis from "../../configs/redis"; // Add this line
+import { User } from "../../domain/entities/User";
 
 const TOKEN_EXPIRY = 60 * 60 * 24; // 1 day in seconds
 
-export const register = async (userData: any) => {
+export const register = async (userData: User) => {
   const hashedPassword = await bcrypt.hash(userData.password, 10);
   const user = new UserModel({ ...userData, password: hashedPassword });
   return user.save();

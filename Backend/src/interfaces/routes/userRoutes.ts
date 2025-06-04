@@ -1,10 +1,11 @@
 import express from "express";
 import { register, login, getProfile } from "../../app/services/authService";
 import { authenticate } from "../middleware/authMiddleware";
+import { User } from "../../domain/entities/User";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req: { body: User }, res) => {
   try {
     const user = await register(req.body);
     res.json(user);

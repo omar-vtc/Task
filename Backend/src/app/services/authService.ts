@@ -1,6 +1,9 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { UserModel } from "../../infrastructure/models/UserModel";
+import redis from "../../configs/redis"; // Add this line
+
+const TOKEN_EXPIRY = 60 * 60 * 24; // 1 day in seconds
 
 export const register = async (userData: any) => {
   const hashedPassword = await bcrypt.hash(userData.password, 10);
@@ -17,5 +20,19 @@ export const login = async (phoneNumber: string, password: string) => {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
     expiresIn: "1d",
   });
+  await redis.set(
+    `auth:token:${token}`,
+    user._id.toString(),
+    "EX",
+    TOKEN_EXPIRY
+  );
+
   return { user, token };
+};
+export const getProfile = async (userId: string) => {
+  const user = await UserModel.findById(userId).select("-password"); // exclude password
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user;
 };

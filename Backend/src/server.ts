@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
 import { connectDB } from "./configs/db";
+import "./configs/redis"; // import triggers connection + logs
 
 dotenv.config();
 

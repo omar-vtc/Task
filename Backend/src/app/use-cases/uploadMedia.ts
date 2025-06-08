@@ -3,9 +3,11 @@ import { MediaModel } from "../../infrastructure/models/MediaModel";
 export const saveMedia = async (
   userId: string,
   fileName: string,
-  mediaType: "image" | "video"
+  mediaType: "image" | "video",
+  url: string,
+  publicId: string
 ) => {
-  const media = new MediaModel({ userId, fileName, mediaType });
+  const media = new MediaModel({ userId, fileName, mediaType, url, publicId });
   return media.save();
 };
 

@@ -8,7 +8,7 @@ final class FeedBlocInitial extends FeedBlocState {}
 final class FeedBlocLoading extends FeedBlocState {}
 
 final class FeedBlocLoaded extends FeedBlocState {
-  final List<Media> item;
+  final List<Feed> item;
   final bool hasReachedEnd;
 
   FeedBlocLoaded({required this.item, required this.hasReachedEnd});

@@ -1,6 +1,4 @@
-import 'package:feeds_app/domain/entities/media.dart';
 import 'package:flutter/material.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class FeedItem extends StatelessWidget {
   const FeedItem({super.key, required this.imgUrl});
@@ -9,15 +7,31 @@ class FeedItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       clipBehavior: Clip.hardEdge,
       elevation: 8,
-      child: Image(
-        image: NetworkImage(imgUrl),
-        fit: BoxFit.cover,
-        height: 600,
-        width: double.infinity,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                margin: EdgeInsets.only(left: 20),
+                child: Text(
+                  "User Name",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Image(
+            image: NetworkImage(imgUrl),
+            fit: BoxFit.cover,
+            height: 600,
+            width: double.infinity,
+          ),
+        ],
       ),
     );
   }

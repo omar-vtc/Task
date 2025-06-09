@@ -51,7 +51,11 @@ class _FeedsScreenState extends State<FeedsScreen> {
               itemBuilder: (context, index) {
                 if (index < state.item.length) {
                   final item = state.item[index];
-                  return FeedItem(imgUrl: item.url); // use correct field
+                  return FeedItem(
+                    imgUrl: item.url,
+                    firstName: item.feedPoster.firstName,
+                    lastName: item.feedPoster.lastName,
+                  ); // use correct field
                 } else {
                   return const Padding(
                     padding: EdgeInsets.all(10),

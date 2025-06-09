@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 
 class FeedItem extends StatelessWidget {
-  const FeedItem({super.key, required this.imgUrl});
   final String imgUrl;
+  final String firstName;
+  final String lastName;
+
+  const FeedItem({
+    super.key,
+    required this.imgUrl,
+    required this.firstName,
+    required this.lastName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +26,7 @@ class FeedItem extends StatelessWidget {
               Container(
                 margin: EdgeInsets.only(left: 20),
                 child: Text(
-                  "User Name",
+                  '$firstName $lastName',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),

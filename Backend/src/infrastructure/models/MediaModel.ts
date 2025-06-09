@@ -7,6 +7,7 @@ const MediaSchema = new mongoose.Schema({
   publicId: { type: String, required: true },
   mediaType: { type: String, enum: ["image", "video"] },
   uploadedAt: { type: Date, default: Date.now },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 export const MediaModel = mongoose.model("Media", MediaSchema);

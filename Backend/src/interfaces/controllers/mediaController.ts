@@ -1,7 +1,12 @@
 import express from "express";
 import multer from "multer";
 import jwt from "jsonwebtoken";
-import { saveMedia, getFeed } from "../../app/use-cases/uploadMedia";
+import {
+  saveMedia,
+  getFeed,
+  getLikedFeeds,
+  toggleLike,
+} from "../../app/use-cases/uploadMedia";
 import cloudinary from "../../configs/cloudinary";
 
 export const uploadMedia = async (req: any, res: any) => {
@@ -42,5 +47,31 @@ export const getFeeds = async (req: any, res: any) => {
   } catch (error) {
     console.error("Error fetching feed:", error);
     res.status(500).json({ error: "Failed to fetch feed" });
+  }
+};
+export const likeOrUnlikeFeed = async (req: any, res: any) => {
+  try {
+    const mediaId = req.params.id;
+    const userId = req.user.id;
+
+    const result = await toggleLike(mediaId, userId);
+    res.status(200).json({ message: result.liked ? "Liked" : "Unliked" });
+  } catch (error) {
+    console.error("Like Error:", error);
+    res.status(500).json({ error: "Failed to toggle like" });
+  }
+};
+
+export const getUserLikedFeeds = async (req: any, res: any) => {
+  try {
+    const userId = req.user.id;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+
+    const result = await getLikedFeeds(userId, page, limit);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Fetch liked feeds error:", error);
+    res.status(500).json({ error: "Failed to get liked feeds" });
   }
 };

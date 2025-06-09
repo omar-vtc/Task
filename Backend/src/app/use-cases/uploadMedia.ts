@@ -4,7 +4,13 @@ import mongoose from "mongoose";
 
 export const saveMedia = async (mediaData: Omit<Media, "uploadedAt">) => {
   const media = new MediaModel(mediaData);
-  return media.save();
+  const savedMedia = await media.save();
+
+  // Populate userId with firstName and lastName
+  return MediaModel.findById(savedMedia._id).populate(
+    "userId",
+    "firstName lastName"
+  );
 };
 
 export const getFeed = async (page: number, limit: number) => {

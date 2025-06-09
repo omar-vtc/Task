@@ -15,7 +15,7 @@ class FeedItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       clipBehavior: Clip.hardEdge,
       elevation: 8,
@@ -24,15 +24,25 @@ class FeedItem extends StatelessWidget {
           Row(
             children: [
               Container(
-                margin: EdgeInsets.only(left: 20),
-                child: Text(
-                  '$firstName $lastName',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                margin: const EdgeInsets.only(left: 10),
+
+                child: Row(
+                  children: [
+                    const Icon(Icons.person),
+                    const SizedBox(width: 10),
+                    Text(
+                      '$firstName $lastName',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Image(
             image: NetworkImage(imgUrl),
             fit: BoxFit.cover,

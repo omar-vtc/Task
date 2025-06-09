@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:feeds_app/domain/entities/feed.dart';
 import 'package:feeds_app/domain/useCases/feed_use_case.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:meta/meta.dart';
 
 part 'feed_bloc_event.dart';
@@ -11,6 +12,22 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
 
   FeedBlocBloc({required this.feedUseCase}) : super(FeedBlocInitial()) {
     on<FetchFeed>(_onFetchFeed);
+    on<UploadFeed>((event, emit) async {
+      try {
+        emit(FeedBlocLoading());
+        final Feed newFeed = await feedUseCase.uploadFeed(event.file);
+
+        _items.insert(0, newFeed); // optimistically add to top
+        emit(
+          FeedBlocLoaded(
+            item: List.from(_items),
+            hasReachedEnd: _hasReachedEnd,
+          ),
+        );
+      } catch (e) {
+        emit(FeedBlocError('Upload failed: $e'));
+      }
+    });
   }
 
   final List<Feed> _items = [];

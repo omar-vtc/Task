@@ -2,6 +2,7 @@ import 'package:feeds_app/app/bloc/feed_bloc_bloc.dart';
 import 'package:feeds_app/app/widgets/feed_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FeedsScreen extends StatefulWidget {
   const FeedsScreen({super.key});
@@ -24,6 +25,14 @@ class _FeedsScreenState extends State<FeedsScreen> {
         context.read<FeedBlocBloc>().add(FetchFeed());
       }
     });
+  }
+
+  Future<void> _pickAndUploadImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      context.read<FeedBlocBloc>().add(UploadFeed(image));
+    }
   }
 
   @override
@@ -67,6 +76,14 @@ class _FeedsScreenState extends State<FeedsScreen> {
           }
           return const SizedBox.shrink();
         },
+      ),
+      floatingActionButton: IconButton(
+        onPressed: _pickAndUploadImage,
+        icon: Icon(
+          Icons.add_box_rounded,
+          size: 40,
+          color: const Color.fromARGB(255, 134, 16, 238),
+        ),
       ),
     );
   }

@@ -1,20 +1,24 @@
 import 'package:bloc/bloc.dart';
-import 'package:feeds_app/app/widgets/feed_item.dart';
-import 'package:feeds_app/domain/entities/media.dart';
+import 'package:feeds_app/domain/entities/feed.dart';
+import 'package:feeds_app/domain/useCases/feed_use_case.dart';
 import 'package:meta/meta.dart';
 
 part 'feed_bloc_event.dart';
 part 'feed_bloc_state.dart';
 
 class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
-  FeedBlocBloc() : super(FeedBlocInitial()) {
+  final FeedUseCase feedUseCase;
+
+  FeedBlocBloc({required this.feedUseCase}) : super(FeedBlocInitial()) {
     on<FetchFeed>(_onFetchFeed);
   }
 
-  final List<Media> _items = [];
-  int _page = 0;
+  final List<Feed> _items = [];
+  int _page = 1;
+  final int _limit = 5;
   bool _isFetching = false;
   bool _hasReachedEnd = false;
+
   Future<void> _onFetchFeed(
     FetchFeed event,
     Emitter<FeedBlocState> emit,
@@ -23,27 +27,20 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
 
     _isFetching = true;
 
-    // Emit loading only if it's the first load
     if (_items.isEmpty) {
       emit(FeedBlocLoading());
     }
 
     try {
-      await Future.delayed(Duration(seconds: 2)); // Simulate network delay
-
-      final List<Media> newItems = List.generate(
-        20,
-        (index) => Media(
-          id: '$_page-$index',
-          imageUrl: 'https://picsum.photos/id/${_page * 20 + index}/300/200',
-        ),
+      final List<Feed> newFeeds = await feedUseCase.getFeeds(
+        page: _page,
+        limit: _limit,
       );
 
-      // Simulate reaching the end (you can tweak this logic)
-      if (_page >= 10) {
+      if (newFeeds.isEmpty) {
         _hasReachedEnd = true;
       } else {
-        _items.addAll(newItems);
+        _items.addAll(newFeeds);
         _page++;
       }
 
@@ -51,7 +48,7 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
         FeedBlocLoaded(item: List.from(_items), hasReachedEnd: _hasReachedEnd),
       );
     } catch (e) {
-      emit(FeedBlocError('Failed to load images.'));
+      emit(FeedBlocError('Failed to load feeds: $e'));
     } finally {
       _isFetching = false;
     }

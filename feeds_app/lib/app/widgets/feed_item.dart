@@ -16,7 +16,7 @@ class FeedItem extends StatelessWidget {
       child: Image(
         image: NetworkImage(imgUrl),
         fit: BoxFit.cover,
-        height: 300,
+        height: 600,
         width: double.infinity,
       ),
     );

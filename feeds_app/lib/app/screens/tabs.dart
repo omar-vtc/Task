@@ -2,46 +2,50 @@ import 'package:feeds_app/app/bloc/feed_bloc_bloc.dart';
 import 'package:feeds_app/app/screens/feeds.dart';
 import 'package:feeds_app/app/screens/likes.dart';
 import 'package:feeds_app/app/screens/profile.dart';
+import 'package:feeds_app/domain/useCases/feed_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabsScreen extends StatefulWidget {
   const TabsScreen({super.key});
   @override
-  State<StatefulWidget> createState() {
-    return _TabsScreenState();
-  }
+  State<TabsScreen> createState() => _TabsScreenState();
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-  Widget activeScreen = FeedsScreen();
+  late final FeedBlocBloc feedBloc;
   int _selectedScreenIndex = 0;
 
-  void _selectScreen(int index) {
-    setState(() {
-      _selectedScreenIndex = index;
-    });
+  @override
+  void initState() {
+    super.initState();
+    feedBloc = FeedBlocBloc(feedUseCase: FeedUseCase());
+  }
+
+  @override
+  void dispose() {
+    feedBloc.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var activeScreenTitle = "Feeds";
-    if (_selectedScreenIndex == 1) {
-      activeScreen = LikesScreen();
-      activeScreenTitle = "Likes";
-    } else if (_selectedScreenIndex == 2) {
-      activeScreen = ProfileScreen();
-      activeScreenTitle = "Profile";
-    } else {
-      activeScreen = BlocProvider(
-        create: (_) => FeedBlocBloc(),
-        child: FeedsScreen(),
-      );
-      activeScreenTitle = "Feeds";
-    }
+    final List<Widget> screens = [
+      BlocProvider.value(value: feedBloc, child: const FeedsScreen()),
+      const LikesScreen(),
+      const ProfileScreen(),
+    ];
+
+    final titles = ["Feeds", "Likes", "Profile"];
+
     return Scaffold(
-      appBar: AppBar(title: Text(activeScreenTitle)),
+      appBar: AppBar(title: Text(titles[_selectedScreenIndex])),
+      body: IndexedStack(index: _selectedScreenIndex, children: screens),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedScreenIndex,
+        onTap: (index) {
+          setState(() => _selectedScreenIndex = index);
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Feeds"),
           BottomNavigationBarItem(
@@ -50,9 +54,7 @@ class _TabsScreenState extends State<TabsScreen> {
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
-        onTap: _selectScreen,
       ),
-      body: activeScreen,
     );
   }
 }

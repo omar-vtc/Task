@@ -7,7 +7,7 @@ class FeedsScreen extends StatefulWidget {
   const FeedsScreen({super.key});
 
   @override
-  _FeedsScreenState createState() => _FeedsScreenState();
+  State<FeedsScreen> createState() => _FeedsScreenState();
 }
 
 class _FeedsScreenState extends State<FeedsScreen> {
@@ -51,18 +51,17 @@ class _FeedsScreenState extends State<FeedsScreen> {
               itemBuilder: (context, index) {
                 if (index < state.item.length) {
                   final item = state.item[index];
-                  return FeedItem(imgUrl: item.imageUrl);
+                  return FeedItem(imgUrl: item.url); // use correct field
                 } else {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      padding: EdgeInsets.all(10),
-                    ),
+                  return const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
               },
             );
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
       ),
     );

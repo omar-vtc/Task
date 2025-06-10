@@ -1,7 +1,10 @@
+import 'package:feeds_app/app/Auth/bloc/auth_bloc.dart';
+import 'package:feeds_app/app/Auth/bloc/auth_state.dart';
 import 'package:feeds_app/app/bloc/feed_bloc_bloc.dart';
 import 'package:feeds_app/app/widgets/feed_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FeedsScreen extends StatefulWidget {
   const FeedsScreen({super.key});
@@ -26,6 +29,14 @@ class _FeedsScreenState extends State<FeedsScreen> {
     });
   }
 
+  Future<void> _pickAndUploadImage(String token) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      context.read<FeedBlocBloc>().add(UploadFeed(image, token));
+    }
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -34,6 +45,14 @@ class _FeedsScreenState extends State<FeedsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    String? userId;
+
+    if (authState is Authenticated) {
+      userId = authState.user.id;
+      token = (authState as Authenticated).token;
+    }
     return Scaffold(
       body: BlocBuilder<FeedBlocBloc, FeedBlocState>(
         builder: (context, state) {
@@ -51,7 +70,21 @@ class _FeedsScreenState extends State<FeedsScreen> {
               itemBuilder: (context, index) {
                 if (index < state.item.length) {
                   final item = state.item[index];
-                  return FeedItem(imgUrl: item.url); // use correct field
+                  return FeedItem(
+                    imgUrl: item.url,
+                    firstName: item.feedPoster.firstName,
+                    lastName: item.feedPoster.lastName,
+                    isLiked: userId != null && item.likes.contains(userId),
+                    onLikeToggle: () {
+                      context.read<FeedBlocBloc>().add(
+                        ToggleLikeEvent(
+                          feedId: item.id,
+                          token: token!,
+                          userId: userId!,
+                        ),
+                      );
+                    },
+                  ); // use correct field
                 } else {
                   return const Padding(
                     padding: EdgeInsets.all(10),
@@ -63,6 +96,16 @@ class _FeedsScreenState extends State<FeedsScreen> {
           }
           return const SizedBox.shrink();
         },
+      ),
+      floatingActionButton: IconButton(
+        onPressed: () {
+          _pickAndUploadImage(token!);
+        },
+        icon: Icon(
+          Icons.add_box_rounded,
+          size: 40,
+          color: const Color.fromARGB(255, 134, 16, 238),
+        ),
       ),
     );
   }

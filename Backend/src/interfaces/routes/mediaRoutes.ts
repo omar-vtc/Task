@@ -5,7 +5,12 @@ import jwt from "jsonwebtoken";
 import { saveMedia, getFeed } from "../../app/use-cases/uploadMedia";
 import { authenticate } from "../middleware/authMiddleware";
 import cloudinary from "../../configs/cloudinary";
-import { getFeeds, uploadMedia } from "../controllers/mediaController";
+import {
+  getFeeds,
+  getUserLikedFeeds,
+  likeOrUnlikeFeed,
+  uploadMedia,
+} from "../controllers/mediaController";
 
 const router = express.Router();
 export const upload = multer({ storage: multer.memoryStorage() });
@@ -23,5 +28,8 @@ export const upload = multer({ storage: multer.memoryStorage() });
 router.post("/upload", authenticate, upload.single("file"), uploadMedia);
 
 router.get("/feed", getFeeds);
+
+router.post("/feed/:id/like", authenticate, likeOrUnlikeFeed);
+router.get("/feed/liked", authenticate, getUserLikedFeeds);
 
 export default router;

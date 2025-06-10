@@ -4,6 +4,10 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to upload media.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to upload media.</string>
 	<key>CFBundleDisplayName</key>
 	<string>Feeds App</string>
 	<key>CFBundleExecutable</key>

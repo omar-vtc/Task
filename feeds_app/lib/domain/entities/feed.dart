@@ -8,6 +8,7 @@ class Feed {
   final String mediaType;
   final DateTime uploadedAt;
   final FeedPoster feedPoster;
+  final List<String> likes;
 
   Feed({
     required this.id,
@@ -17,5 +18,29 @@ class Feed {
     required this.mediaType,
     required this.uploadedAt,
     required this.feedPoster,
+    required this.likes,
   });
+
+  // Add this method:
+  Feed copyWith({
+    String? id,
+    String? url,
+    String? fileName,
+    String? publicId,
+    String? mediaType,
+    DateTime? uploadedAt,
+    FeedPoster? feedPoster,
+    List<String>? likes,
+  }) {
+    return Feed(
+      id: id ?? this.id,
+      url: url ?? this.url,
+      fileName: fileName ?? this.fileName,
+      publicId: publicId ?? this.publicId,
+      mediaType: mediaType ?? this.mediaType,
+      uploadedAt: uploadedAt ?? this.uploadedAt,
+      feedPoster: feedPoster ?? this.feedPoster,
+      likes: likes ?? this.likes,
+    );
+  }
 }

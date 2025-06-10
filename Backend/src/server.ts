@@ -3,6 +3,7 @@ import userRoutes from "./interfaces/routes/userRoutes";
 import mediaRoutes from "./interfaces/routes/mediaRoutes";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import path from "path";
 import { connectDB } from "./configs/db";
 import "./configs/redis"; // import triggers connection + logs
@@ -17,6 +18,12 @@ connectDB()
   });
 
 const app = express();
+app.use(
+  cors({
+    origin: "http://localhost:5173", // allow your frontend
+    credentials: true, // if you're using cookies or auth headers
+  })
+);
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 

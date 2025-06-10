@@ -2,6 +2,7 @@ import 'package:feeds_app/app/Auth/bloc/auth_bloc.dart';
 import 'package:feeds_app/app/Auth/bloc/auth_event.dart';
 import 'package:feeds_app/app/Auth/bloc/auth_state.dart';
 import 'package:feeds_app/app/screens/feeds.dart';
+import 'package:feeds_app/app/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -88,6 +89,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: const Text('Login'),
                             ),
                           ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text("Don't have an account? Register"),
+                      ),
                     ],
                   ),
                 ),

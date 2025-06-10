@@ -15,9 +15,12 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
     on<UploadFeed>((event, emit) async {
       try {
         emit(FeedBlocLoading());
-        final Feed newFeed = await feedUseCase.uploadFeed(event.file);
+        final Feed newFeed = await feedUseCase.uploadFeed(
+          event.file,
+          event.token,
+        );
 
-        _items.insert(0, newFeed); // optimistically add to top
+        _items.insert(0, newFeed);
         emit(
           FeedBlocLoaded(
             item: List.from(_items),
@@ -33,7 +36,6 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
       final currentState = state;
 
       if (currentState is FeedBlocLoaded) {
-        // 1. Optimistically update the UI
         List<Feed> updatedItems =
             currentState.item.map((feed) {
               if (feed.id == event.feedId) {
@@ -43,19 +45,18 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
                 } else {
                   updatedLikes.add(event.userId);
                 }
-                return Feed(
-                  id: feed.id,
-                  url: feed.url,
-                  fileName: feed.fileName,
-                  publicId: feed.publicId,
-                  mediaType: feed.mediaType,
-                  uploadedAt: feed.uploadedAt,
-                  feedPoster: feed.feedPoster,
-                  likes: updatedLikes,
-                );
+                return feed.copyWith(likes: updatedLikes);
               }
               return feed;
             }).toList();
+
+        // 👇 Filter out from liked feeds if unliked
+        if (event.fromLikesScreen) {
+          updatedItems =
+              updatedItems
+                  .where((feed) => feed.likes.contains(event.userId))
+                  .toList();
+        }
 
         emit(
           FeedBlocLoaded(
@@ -64,15 +65,28 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
           ),
         );
 
-        // 2. Call backend use case
         try {
           await feedUseCase.toggleLike(event.feedId, event.token);
         } catch (e) {
-          // Optional: handle failure (e.g., revert state or notify user)
           emit(FeedBlocError("Failed to toggle like"));
-          // Optionally re-emit previous state or re-fetch
-          add(FetchFeed());
+          // Optional: re-fetch if needed
+          if (event.fromLikesScreen) {
+            add(FetchLikedFeeds(event.token));
+          } else {
+            add(FetchFeed());
+          }
         }
+      }
+    });
+
+    on<FetchLikedFeeds>((event, emit) async {
+      print("called");
+      emit(FeedBlocLoading());
+      try {
+        final likedFeeds = await feedUseCase.getUserLikedFeeds(event.token);
+        emit(FeedBlocLoaded(item: likedFeeds, hasReachedEnd: true));
+      } catch (e) {
+        emit(FeedBlocError("Failed to load liked feeds"));
       }
     });
   }

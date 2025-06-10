@@ -32,8 +32,15 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      BlocProvider.value(value: feedBloc, child: const FeedsScreen()),
-      const LikesScreen(),
+      BlocProvider(
+        create:
+            (_) => FeedBlocBloc(feedUseCase: FeedUseCase())..add(FetchFeed()),
+        child: const FeedsScreen(),
+      ),
+      BlocProvider(
+        create: (_) => FeedBlocBloc(feedUseCase: FeedUseCase()),
+        child: const LikesScreen(),
+      ),
       const ProfileScreen(),
     ];
 

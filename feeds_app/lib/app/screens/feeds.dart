@@ -29,11 +29,11 @@ class _FeedsScreenState extends State<FeedsScreen> {
     });
   }
 
-  Future<void> _pickAndUploadImage() async {
+  Future<void> _pickAndUploadImage(String token) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      context.read<FeedBlocBloc>().add(UploadFeed(image));
+      context.read<FeedBlocBloc>().add(UploadFeed(image, token));
     }
   }
 
@@ -98,7 +98,9 @@ class _FeedsScreenState extends State<FeedsScreen> {
         },
       ),
       floatingActionButton: IconButton(
-        onPressed: _pickAndUploadImage,
+        onPressed: () {
+          _pickAndUploadImage(token!);
+        },
         icon: Icon(
           Icons.add_box_rounded,
           size: 40,

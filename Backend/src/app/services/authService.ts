@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { UserModel } from "../../infrastructure/models/UserModel";
 import redis from "../../configs/redis"; // Add this line
 import { User } from "../../domain/entities/User";
+import { MediaModel } from "../../infrastructure/models/MediaModel";
 
 const TOKEN_EXPIRY = 60 * 60 * 24; // 1 day in seconds
 
@@ -31,9 +32,19 @@ export const login = async (phoneNumber: string, password: string) => {
   return { user, token };
 };
 export const getProfile = async (userId: string) => {
-  const user = await UserModel.findById(userId).select("-password"); // exclude password
+  const user = await UserModel.findById(userId).select("-password").lean();
+
   if (!user) {
     throw new Error("User not found");
   }
-  return user;
+
+  const feeds = await MediaModel.find({ userId })
+    .sort({ uploadedAt: -1 })
+    .populate("userId", "firstName lastName")
+    .lean();
+
+  return {
+    user,
+    feeds,
+  };
 };

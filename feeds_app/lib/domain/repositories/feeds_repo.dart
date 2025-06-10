@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 abstract class FeedsRepo {
   Future<Either<Failure, List<Feed>>> getFeedsFromDataSource();
 
-  Future<void> uploadMedia(XFile file);
+  Future<void> uploadMedia(XFile file, String token);
   Future<void> toggleLike(String feedId, String token);
+  Future<List<Feed>> fetchUserLikedFeeds(String token);
 }

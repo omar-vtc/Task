@@ -12,7 +12,6 @@ class FeedsRepoImpl implements FeedsRepo {
 
   FeedsRepoImpl({required this.page, required this.limit});
 
-  // Named constructor with default values
   FeedsRepoImpl.initial() : page = 1, limit = 10;
   @override
   Future<Either<Failure, List<Feed>>> getFeedsFromDataSource() async {
@@ -22,12 +21,17 @@ class FeedsRepoImpl implements FeedsRepo {
   }
 
   @override
-  Future<Feed> uploadMedia(XFile file) async {
-    return feedService.uploadMediaToDatasource(file);
+  Future<Feed> uploadMedia(XFile file, String token) async {
+    return feedService.uploadMediaToDatasource(file, token);
   }
 
   @override
   Future<void> toggleLike(String feedId, String token) {
     return feedService.toggleLike(feedId, token);
+  }
+
+  @override
+  Future<List<Feed>> fetchUserLikedFeeds(String token) {
+    return feedService.fetchLikedFeeds(token);
   }
 }

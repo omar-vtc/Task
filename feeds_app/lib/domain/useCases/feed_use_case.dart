@@ -32,11 +32,9 @@ class FeedUseCase {
         .toList();
   }
 
-  Future<Feed> uploadFeed(XFile file) async {
+  Future<Feed> uploadFeed(XFile file, String token) async {
     final feedsRepoImpl = FeedsRepoImpl.initial();
-    final dto = await feedsRepoImpl.uploadMedia(
-      file,
-    ); // make sure this returns DTO
+    final dto = await feedsRepoImpl.uploadMedia(file, token);
 
     return Feed(
       id: dto.id,
@@ -57,5 +55,30 @@ class FeedUseCase {
   Future<void> toggleLike(String feedId, String token) async {
     final feedsRepo = FeedsRepoImpl.initial();
     await feedsRepo.toggleLike(feedId, token);
+  }
+
+  Future<List<Feed>> getUserLikedFeeds(String token) async {
+    final feedsRepo = FeedsRepoImpl.initial();
+
+    final dtos = await feedsRepo.fetchUserLikedFeeds(token);
+
+    return dtos
+        .map(
+          (dto) => Feed(
+            id: dto.id,
+            url: dto.url,
+            fileName: dto.fileName,
+            publicId: dto.publicId,
+            mediaType: dto.mediaType,
+            uploadedAt: dto.uploadedAt,
+            feedPoster: FeedPoster(
+              id: dto.feedPoster.id,
+              firstName: dto.feedPoster.firstName,
+              lastName: dto.feedPoster.lastName,
+            ),
+            likes: dto.likes,
+          ),
+        )
+        .toList();
   }
 }

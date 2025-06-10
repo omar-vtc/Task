@@ -56,4 +56,13 @@ class StorageService {
       return null;
     }
   }
+
+  Future<void> clearUser() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('user');
+    } catch (e) {
+      print('Error clearing user: $e');
+    }
+  }
 }

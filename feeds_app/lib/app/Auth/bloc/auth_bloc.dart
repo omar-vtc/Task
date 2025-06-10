@@ -60,6 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
+    print("logout hit");
     try {
       final token = await storageService.getToken();
 
@@ -68,6 +69,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       await storageService.clearToken();
+      await storageService.clearUser();
+
       emit(AuthInitial());
     } catch (e) {
       emit(AuthError(e.toString()));

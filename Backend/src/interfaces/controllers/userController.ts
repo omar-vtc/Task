@@ -1,6 +1,9 @@
-import express from "express";
-import { register, login, getProfile } from "../../app/services/authService";
-import { authenticate } from "../middleware/authMiddleware";
+import {
+  register,
+  login,
+  getProfile,
+  logout,
+} from "../../app/services/authService";
 import { User } from "../../domain/entities/User";
 
 export const registerUser = async (req: { body: User }, res: any) => {
@@ -32,5 +35,21 @@ export const getUserProfile = async (req: any, res: any) => {
     res.json(user);
   } catch (e: any) {
     res.status(404).json({ error: e.message });
+  }
+};
+export const logoutUser = async (req: any, res: any) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const result = await logout(token);
+
+    res.json(result);
+  } catch (e: any) {
+    res.status(400).json({ error: e.message });
   }
 };

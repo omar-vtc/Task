@@ -48,3 +48,14 @@ export const getProfile = async (userId: string) => {
     feeds,
   };
 };
+
+export const logout = async (token: string) => {
+  const redisKey = `auth:token:${token}`;
+  const result = await redis.del(redisKey);
+
+  if (result === 0) {
+    throw new Error("Invalid or already logged out token");
+  }
+
+  return { message: "Logged out successfully" };
+};

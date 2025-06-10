@@ -60,8 +60,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     LogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await storageService.clearToken();
-    emit(AuthInitial());
+    try {
+      final token = await storageService.getToken();
+
+      if (token != null) {
+        await authRepository.logout(token);
+      }
+
+      await storageService.clearToken();
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
   }
 
   Future<void> _onRegisterRequested(

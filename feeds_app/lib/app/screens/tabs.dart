@@ -14,6 +14,7 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   late final FeedBlocBloc feedBloc;
+
   int _selectedScreenIndex = 0;
 
   @override

@@ -9,6 +9,7 @@ abstract class FeedService {
   /// return [feedDto].
   Future<List<FeedDto>> fetchFeeds({required int page, required int limit});
   Future<FeedDto> uploadMediaToDatasource(XFile file);
+  Future<void> toggleLike(String feedId, String token);
 }
 
 class FeedServiceImpl implements FeedService {
@@ -48,5 +49,19 @@ class FeedServiceImpl implements FeedService {
     final jsonData = jsonDecode(responseBody);
 
     return FeedDto.fromJson(jsonData);
+  }
+
+  @override
+  Future<void> toggleLike(String feedId, String token) async {
+    final uri = Uri.parse('$baseUrl/feed/$feedId/like');
+
+    final response = await client.post(
+      uri,
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to like/unlike feed');
+    }
   }
 }

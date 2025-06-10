@@ -13,6 +13,7 @@ export const registerUser = async (req: { body: User }, res: any) => {
 };
 
 export const userLogin = async (req: any, res: any) => {
+  //   console.log("called");
   try {
     const { user, token } = await login(
       req.body.phoneNumber,

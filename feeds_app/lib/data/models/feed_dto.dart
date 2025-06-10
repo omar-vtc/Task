@@ -12,6 +12,7 @@ class FeedDto extends Feed {
     required super.mediaType,
     required super.uploadedAt,
     required super.feedPoster,
+    required super.likes,
   });
 
   factory FeedDto.fromJson(Map<String, dynamic> json) {
@@ -23,6 +24,7 @@ class FeedDto extends Feed {
       mediaType: json['mediaType'],
       uploadedAt: DateTime.parse(json['uploadedAt']),
       feedPoster: FeedPosterDto.fromJson(json['userId']),
+      likes: List<String>.from(json['likes'] ?? []),
     );
   }
 }

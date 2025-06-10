@@ -1,3 +1,5 @@
+import 'package:feeds_app/app/Auth/bloc/auth_bloc.dart';
+import 'package:feeds_app/app/Auth/bloc/auth_state.dart';
 import 'package:feeds_app/app/bloc/feed_bloc_bloc.dart';
 import 'package:feeds_app/app/widgets/feed_item.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,14 @@ class _FeedsScreenState extends State<FeedsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    String? token;
+    String? userId;
+
+    if (authState is Authenticated) {
+      userId = authState.user.id;
+      token = (authState as Authenticated).token;
+    }
     return Scaffold(
       body: BlocBuilder<FeedBlocBloc, FeedBlocState>(
         builder: (context, state) {
@@ -64,6 +74,16 @@ class _FeedsScreenState extends State<FeedsScreen> {
                     imgUrl: item.url,
                     firstName: item.feedPoster.firstName,
                     lastName: item.feedPoster.lastName,
+                    isLiked: userId != null && item.likes.contains(userId),
+                    onLikeToggle: () {
+                      context.read<FeedBlocBloc>().add(
+                        ToggleLikeEvent(
+                          feedId: item.id,
+                          token: token!,
+                          userId: userId!,
+                        ),
+                      );
+                    },
                   ); // use correct field
                 } else {
                   return const Padding(

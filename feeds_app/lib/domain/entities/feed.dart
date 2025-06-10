@@ -8,6 +8,7 @@ class Feed {
   final String mediaType;
   final DateTime uploadedAt;
   final FeedPoster feedPoster;
+  final List<String> likes;
 
   Feed({
     required this.id,
@@ -17,5 +18,6 @@ class Feed {
     required this.mediaType,
     required this.uploadedAt,
     required this.feedPoster,
+    required this.likes,
   });
 }

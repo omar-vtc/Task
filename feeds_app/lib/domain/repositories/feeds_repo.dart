@@ -7,4 +7,5 @@ abstract class FeedsRepo {
   Future<Either<Failure, List<Feed>>> getFeedsFromDataSource();
 
   Future<void> uploadMedia(XFile file);
+  Future<void> toggleLike(String feedId, String token);
 }

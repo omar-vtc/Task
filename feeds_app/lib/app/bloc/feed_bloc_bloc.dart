@@ -28,6 +28,53 @@ class FeedBlocBloc extends Bloc<FeedBlocEvent, FeedBlocState> {
         emit(FeedBlocError('Upload failed: $e'));
       }
     });
+
+    on<ToggleLikeEvent>((event, emit) async {
+      final currentState = state;
+
+      if (currentState is FeedBlocLoaded) {
+        // 1. Optimistically update the UI
+        List<Feed> updatedItems =
+            currentState.item.map((feed) {
+              if (feed.id == event.feedId) {
+                List<String> updatedLikes = List.from(feed.likes);
+                if (updatedLikes.contains(event.userId)) {
+                  updatedLikes.remove(event.userId);
+                } else {
+                  updatedLikes.add(event.userId);
+                }
+                return Feed(
+                  id: feed.id,
+                  url: feed.url,
+                  fileName: feed.fileName,
+                  publicId: feed.publicId,
+                  mediaType: feed.mediaType,
+                  uploadedAt: feed.uploadedAt,
+                  feedPoster: feed.feedPoster,
+                  likes: updatedLikes,
+                );
+              }
+              return feed;
+            }).toList();
+
+        emit(
+          FeedBlocLoaded(
+            item: updatedItems,
+            hasReachedEnd: currentState.hasReachedEnd,
+          ),
+        );
+
+        // 2. Call backend use case
+        try {
+          await feedUseCase.toggleLike(event.feedId, event.token);
+        } catch (e) {
+          // Optional: handle failure (e.g., revert state or notify user)
+          emit(FeedBlocError("Failed to toggle like"));
+          // Optionally re-emit previous state or re-fetch
+          add(FetchFeed());
+        }
+      }
+    });
   }
 
   final List<Feed> _items = [];

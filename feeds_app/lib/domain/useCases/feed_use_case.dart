@@ -26,6 +26,7 @@ class FeedUseCase {
               firstName: dto.feedPoster.firstName,
               lastName: dto.feedPoster.lastName,
             ),
+            likes: dto.likes,
           ),
         )
         .toList();
@@ -49,6 +50,12 @@ class FeedUseCase {
         firstName: dto.feedPoster.firstName,
         lastName: dto.feedPoster.lastName,
       ),
+      likes: dto.likes,
     );
+  }
+
+  Future<void> toggleLike(String feedId, String token) async {
+    final feedsRepo = FeedsRepoImpl.initial();
+    await feedsRepo.toggleLike(feedId, token);
   }
 }

@@ -11,3 +11,15 @@ class UploadFeed extends FeedBlocEvent {
 
   UploadFeed(this.file);
 }
+
+class ToggleLikeEvent extends FeedBlocEvent {
+  final String feedId;
+  final String token;
+  final String userId;
+
+  ToggleLikeEvent({
+    required this.feedId,
+    required this.token,
+    required this.userId,
+  });
+}

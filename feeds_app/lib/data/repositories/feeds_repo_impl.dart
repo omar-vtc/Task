@@ -25,4 +25,9 @@ class FeedsRepoImpl implements FeedsRepo {
   Future<Feed> uploadMedia(XFile file) async {
     return feedService.uploadMediaToDatasource(file);
   }
+
+  @override
+  Future<void> toggleLike(String feedId, String token) {
+    return feedService.toggleLike(feedId, token);
+  }
 }

@@ -5,7 +5,7 @@ import SignUp from "./pages/SignUp";
 import Feeds from "./pages/Feeds";
 import Likes from "./pages/Likes";
 import Profile from "./pages/Profile";
-import MainLayout from "./components/MainLayout";
+// import MainLayout from "./components/MainLayout";
 
 function App() {
   const token = useAuthStore((state) => state.token);
@@ -23,7 +23,7 @@ function App() {
 function MainRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
+      <Route path="/" element={<Feeds />}>
         <Route path="feeds" element={<Feeds />} />
         <Route path="likes" element={<Likes />} />
         <Route path="profile" element={<Profile />} />

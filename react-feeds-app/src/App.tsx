@@ -8,7 +8,8 @@ import Profile from "./pages/Profile";
 // import MainLayout from "./components/MainLayout";
 
 function App() {
-  const token = useAuthStore((state) => state.token);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const token = useAuthStore((state: { token: any }) => state.token);
 
   return (
     <Routes>

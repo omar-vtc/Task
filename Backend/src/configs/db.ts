@@ -13,6 +13,7 @@ export const connectDB = async (): Promise<void> => {
   }
 
   try {
+    console.log("hello");
     await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
